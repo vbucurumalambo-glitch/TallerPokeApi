@@ -1,0 +1,12 @@
+{
+  "name": "tallerpokeapi",
+  "version": "1.0.0",
+  "description": "Taller Pokédex de Consola - Introducción a APIs con JavaScript",
+  "main": "pokedex.js",
+  "scripts": {
+    "start": "node pokedex.js"
+  },
+  "dependencies": {
+    "prompt-sync": "^4.2.0"
+  }
+}

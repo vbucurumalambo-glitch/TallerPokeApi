@@ -2,6 +2,9 @@
 // Taller - Pokédex de Consola
 // API usada: https://pokeapi.co
 
+// prompt-sync sirve para pedirle datos al usuario por teclado
+const prompt = require("prompt-sync")();
+
 // ============================================================
 // Parte 2 - Función buscarPokemon()
 // ============================================================
@@ -158,9 +161,9 @@ async function pokemonMasFuerte(listaNombres, stat) {
 }
 
 // ============================================================
-// Programa principal - Ejercicios
+// Ejercicios del taller (1 a 5)
 // ============================================================
-async function main() {
+async function ejecutarEjercicios() {
   // ---------- Ejercicio 2 ----------
   console.log("##### Ejercicio 2 #####");
   const nombres2 = ["pikachu", "bulbasaur", "squirtle"];
@@ -220,4 +223,94 @@ async function main() {
   mostrarFicha(datosGanador);
 }
 
-main();
+// ============================================================
+// Menú interactivo (la herramienta de línea de comandos)
+// ============================================================
+const statsValidas = ["hp", "attack", "defense", "special-attack", "special-defense", "speed"];
+
+// Función chiquita para leer texto sin que se rompa si viene vacío
+function leer(mensaje) {
+  const texto = prompt(mensaje);
+  if (texto === null) {
+    return "";
+  }
+  return texto.trim();
+}
+
+// Pide una stat y verifica que sea válida
+function pedirStat() {
+  console.log("Stats disponibles: " + statsValidas.join(", "));
+  const stat = leer("Escribe la stat: ").toLowerCase();
+  if (!statsValidas.includes(stat)) {
+    console.log("Esa stat no es válida.");
+    return null;
+  }
+  return stat;
+}
+
+async function menu() {
+  console.log("\n*** BIENVENIDO A LA POKÉDEX DE CONSOLA ***");
+  console.log("Busca, compara y descubre quién es el más fuerte!");
+
+  let seguir = true;
+
+  while (seguir) {
+    console.log("\n------------ MENÚ ------------");
+    console.log("1. Buscar un pokémon (ver su ficha)");
+    console.log("2. Comparar dos pokémon");
+    console.log("3. Encontrar el más fuerte de una lista");
+    console.log("4. Correr los ejercicios del taller");
+    console.log("0. Salir");
+    const opcion = leer("Elige una opción: ");
+
+    if (opcion === "1") {
+      const nombre = leer("Nombre del pokémon: ");
+      if (nombre === "") {
+        console.log("Tienes que escribir un nombre.");
+        continue;
+      }
+      const datos = await buscarPokemon(nombre);
+      mostrarFicha(datos);
+    } else if (opcion === "2") {
+      const nombre1 = leer("Primer pokémon: ");
+      const nombre2 = leer("Segundo pokémon: ");
+      if (nombre1 === "" || nombre2 === "") {
+        console.log("Tienes que escribir los dos nombres.");
+        continue;
+      }
+      const stat = pedirStat();
+      if (stat === null) {
+        continue;
+      }
+      await compararPokemon(nombre1, nombre2, stat);
+    } else if (opcion === "3") {
+      const texto = leer("Escribe los nombres separados por coma (ej: pikachu, snorlax, gengar): ");
+      const partes = texto.split(",");
+      const lista = [];
+      for (const p of partes) {
+        const limpio = p.trim();
+        if (limpio !== "") {
+          lista.push(limpio);
+        }
+      }
+      if (lista.length === 0) {
+        console.log("La lista está vacía.");
+        continue;
+      }
+      const stat = pedirStat();
+      if (stat === null) {
+        continue;
+      }
+      await pokemonMasFuerte(lista, stat);
+    } else if (opcion === "4") {
+      await ejecutarEjercicios();
+    } else if (opcion === "0") {
+      seguir = false;
+      console.log("Hasta luego, entrenador!");
+    } else {
+      console.log("Opción no válida, intenta de nuevo.");
+    }
+  }
+}
+
+menu();
