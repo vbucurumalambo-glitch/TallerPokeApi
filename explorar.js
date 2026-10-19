@@ -13,7 +13,7 @@ async function explorar() {
 
   // Paso 2: imprimir datos completo para ver la estructura
   // (es muy largo, por eso después imprimo las claves principales)
-  // console.log(datos);
+  console.log(datos);
   console.log("name:", datos.name);
   console.log("id:", datos.id);
   console.log("height:", datos.height);
